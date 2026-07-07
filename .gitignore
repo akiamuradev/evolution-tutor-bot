@@ -1,0 +1,50 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / frontend
+node_modules/
+dist/
+frontend/*/node_modules/
+frontend/*/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Databases and generated data
+*.db
+*.sqlite
+*.sqlite3
+backend/database/*.db
+
+# Logs and diagnostics
+*.log
+diagnostics*.txt
+*diagnostics*.txt
+*диагностика*.txt
+
+# Local editor/system files
+.DS_Store
+.vscode/
+.idea/
+*.vsix
+
+# Temporary parser/export artifacts
+fipi_parser/
+exports/
+tmp/
+temp/

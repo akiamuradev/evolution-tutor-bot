@@ -1,0 +1,60 @@
+services:
+  tutor-bot:
+    build:
+      context: ./backend
+    container_name: tutor-bot-app
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    networks:
+      - tutor-net
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/database:/app/database
+
+  tutor-api:
+    build:
+      context: ./backend
+    container_name: tutor-bot-api
+    restart: always
+    command: python -m src.web_api
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    ports:
+      - "${WEB_API_PORT:-8080}:8080"
+    networks:
+      - tutor-net
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/database:/app/database
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: tutor-bot-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tutor_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-tutor_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - tutor-net
+    command: >
+      postgres 
+      -c shared_preload_libraries=vector 
+      -c max_connections=200
+
+volumes:
+  postgres_data:
+
+networks:
+  tutor-net:
+    driver: bridge

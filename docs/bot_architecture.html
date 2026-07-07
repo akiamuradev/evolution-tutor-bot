@@ -1,0 +1,1365 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EVO:LUTION Bot Architecture</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f6fb;
+      --paper: #ffffff;
+      --surface: #f8fafc;
+      --surface-strong: #eef4fb;
+      --text: #142033;
+      --muted: #5f6f85;
+      --line: #d9e3ef;
+      --accent: #2369d8;
+      --accent-2: #0b9b77;
+      --accent-3: #8a5cf6;
+      --dark: #101827;
+      --code: #eef3f8;
+      --shadow: 0 24px 70px rgba(31, 53, 84, 0.12);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(135deg, rgba(35, 105, 216, 0.08), transparent 34%),
+        linear-gradient(315deg, rgba(11, 155, 119, 0.08), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.62;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    article {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    section,
+    header {
+      padding: 28px clamp(20px, 4vw, 48px);
+    }
+
+    header {
+      display: grid;
+      gap: 22px;
+      background:
+        linear-gradient(135deg, rgba(35, 105, 216, 0.12), rgba(11, 155, 119, 0.08)),
+        var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      letter-spacing: 0;
+      color: var(--dark);
+    }
+
+    h1 {
+      max-width: 880px;
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1.02;
+    }
+
+    h2 {
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.16;
+    }
+
+    h3 {
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 10px 0 0;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: var(--code);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 16px 0 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--code);
+      line-height: 1.45;
+    }
+
+    pre code {
+      padding: 0;
+      background: transparent;
+    }
+
+    pre.mermaid {
+      background: #ffffff;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      margin: 18px 0 0;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: var(--surface-strong);
+      color: var(--dark);
+      font-weight: 800;
+    }
+
+    tr:nth-child(even) td {
+      background: #fbfdff;
+    }
+
+    ul {
+      margin: 12px 0 0;
+      padding-left: 22px;
+    }
+
+    li + li {
+      margin-top: 5px;
+    }
+
+    .lead {
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .meta-grid,
+    .skill-grid,
+    .module-grid,
+    .flow-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .meta-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .skill-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .module-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .flow-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card,
+    .metric,
+    .layer,
+    .callout {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .card,
+    .layer,
+    .callout {
+      padding: 16px;
+    }
+
+    .metric {
+      padding: 15px;
+      background: #ffffff;
+    }
+
+    .metric span,
+    .card span,
+    .layer span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--dark);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .card h3,
+    .layer h3 {
+      margin-bottom: 8px;
+    }
+
+    .card p,
+    .layer p,
+    .callout p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid rgba(35, 105, 216, 0.18);
+      border-radius: 999px;
+      background: rgba(35, 105, 216, 0.08);
+      color: #174f9f;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .section-head {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .section-head p {
+      max-width: 900px;
+      color: var(--muted);
+    }
+
+    .band {
+      border-top: 1px solid var(--line);
+    }
+
+    .dark-band {
+      background: var(--dark);
+      color: #e7eefb;
+    }
+
+    .dark-band h2,
+    .dark-band h3 {
+      color: #ffffff;
+    }
+
+    .dark-band .card {
+      border-color: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .dark-band .card p,
+    .dark-band .section-head p {
+      color: #bac8dd;
+    }
+
+    .tree {
+      font-size: 13px;
+    }
+
+    .note {
+      border-left: 4px solid var(--accent-2);
+      background: rgba(11, 155, 119, 0.08);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      counter-reset: step;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    .step div {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+    }
+
+    .step strong {
+      display: block;
+      color: var(--dark);
+    }
+
+    .step span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .meta-grid,
+      .skill-grid,
+      .module-grid,
+      .flow-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      main {
+        width: min(100% - 18px, 1180px);
+        padding-top: 9px;
+      }
+
+      section,
+      header {
+        padding: 20px 16px;
+      }
+
+      .meta-grid,
+      .skill-grid,
+      .module-grid,
+      .flow-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      main {
+        width: 100%;
+        padding: 0;
+      }
+
+      article {
+        border: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <article>
+      <header>
+        <div>
+          <p class="eyebrow">Портфолио архитектуры</p>
+          <h1>EVO:LUTION Tutor Bot</h1>
+          <p class="lead">
+            Мультиплатформенный AI-репетитор: Telegram-бот, HTTP API для VK Mini App,
+            React/Vite фронтенд, PostgreSQL-хранилище учебного прогресса, RAG-поиск по базе задач,
+            OpenRouter-интеграция, защита от перегрузки и инструменты обработки образовательных данных.
+          </p>
+        </div>
+
+        <div class="meta-grid">
+          <div class="metric">
+            <span>Python backend</span>
+            <strong>74</strong>
+            <span>файла Python в активном backend/tools контуре</span>
+          </div>
+          <div class="metric">
+            <span>Frontend</span>
+            <strong>React</strong>
+            <span>VK Mini App на Vite и VK Bridge</span>
+          </div>
+          <div class="metric">
+            <span>Runtime</span>
+            <strong>3</strong>
+            <span>сервиса Docker Compose: bot, API, PostgreSQL</span>
+          </div>
+          <div class="metric">
+            <span>Data layer</span>
+            <strong>RAG</strong>
+            <span>поиск, ранжирование, прогресс, память</span>
+          </div>
+        </div>
+
+        <div class="tags">
+          <span class="tag">Python 3.11</span>
+          <span class="tag">aiogram 3</span>
+          <span class="tag">aiohttp</span>
+          <span class="tag">asyncpg</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">pgvector image</span>
+          <span class="tag">OpenRouter</span>
+          <span class="tag">React 18</span>
+          <span class="tag">Vite</span>
+          <span class="tag">VK Bridge</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Nginx</span>
+        </div>
+      </header>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Системная карта</p>
+          <h2>Проект построен как продуктовая платформа, а не как один скрипт бота</h2>
+          <p>
+            Код разделен на входные точки, платформенные адаптеры, общий tutoring engine,
+            AI-инфраструктуру, RAG-поиск, базу данных, API, фронтенд и сервисные загрузчики данных.
+          </p>
+        </div>
+
+        <pre class="mermaid">flowchart LR
+    TG["Telegram user"] --> BOT["tutor-bot: python -m src.bot"]
+    VK["VK Mini App user"] --> FE["React/Vite VK Mini App"]
+    FE --> API["tutor-api: python -m src.web_api"]
+    BOT --> ENGINE["TutorEngine: shared tutoring logic"]
+    API --> ENGINE
+    ENGINE --> MEMORY["Dialog memory: profile + history"]
+    ENGINE --> RAG["Tutor-RAG: TaskSearch + pipeline"]
+    ENGINE --> GATEWAY["AI Gateway: queue + stats + cancellation"]
+    GATEWAY --> OR["OpenRouter / LiteLLM-compatible API"]
+    BOT --> DB["PostgreSQL"]
+    API --> DB
+    MEMORY --> DB
+    RAG --> DB
+    TOOLS["FIPI / Sdamgia / Math100 tools"] --> DB</pre>
+
+        <div class="flow-grid">
+          <div class="layer">
+            <h3>Telegram слой</h3>
+            <span><code>backend/src/bot.py</code>, <code>routers/</code></span>
+            <p>Запуск polling, middleware, FSM-сценарии, callback-меню, практика, достижения, документы и ответы пользователю.</p>
+          </div>
+          <div class="layer">
+            <h3>HTTP API слой</h3>
+            <span><code>backend/src/api/</code>, <code>web_api.py</code></span>
+            <p>REST endpoints для VK/Web: профиль, чат, достижения, активность, выдача и проверка задач.</p>
+          </div>
+          <div class="layer">
+            <h3>Shared engine</h3>
+            <span><code>modules/tutor_engine.py</code></span>
+            <p>Единая логика репетитора для Telegram, VK Mini App и будущих веб-клиентов.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Структура репозитория</p>
+          <h2>Максимальная структура проекта</h2>
+          <p>
+            Ниже отражен активный рабочий контур без <code>node_modules</code>, <code>dist</code>,
+            <code>.git</code>, кешей, локальной БД и бинарных артефактов.
+          </p>
+        </div>
+
+        <pre class="tree"><code>bot/
+├── backend/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── database/
+│   │   └── init.sql
+│   └── src/
+│       ├── bot.py                         # Telegram entrypoint
+│       ├── web_api.py                     # HTTP API entrypoint
+│       ├── database.py                    # asyncpg schema + data access
+│       ├── services.py                    # service registry: db, bot, RAG
+│       ├── helpers.py                     # subscriptions, docs, admin helpers
+│       ├── states.py                      # aiogram FSM states
+│       ├── api/
+│       │   ├── app.py                     # aiohttp app lifecycle
+│       │   ├── auth.py                    # VK/dev auth
+│       │   ├── routes.py                  # REST endpoints
+│       │   └── utils.py                   # JSON/CORS helpers
+│       ├── core/
+│       │   └── config.py                  # env parsing
+│       ├── modules/
+│       │   ├── tutor_engine.py            # shared tutoring logic
+│       │   ├── ai_client.py               # OpenRouter client
+│       │   ├── ai_gateway.py              # guarded AI calls + metrics
+│       │   ├── request_guard.py           # global/user AI queue
+│       │   ├── anti_spam.py               # Telegram/API rate control
+│       │   ├── model_router.py            # fast/standard/reasoning model routing
+│       │   ├── memory.py                  # long-term dialog memory
+│       │   ├── tutor_intent.py            # guided solving policy
+│       │   ├── prompts.py                 # tutor system prompts
+│       │   ├── cache.py                   # LRU cache for AI responses
+│       │   ├── generation_control.py      # cancellable generation registry
+│       │   ├── vk_auth.py                 # VK launch signature verification
+│       │   ├── keyboards.py               # Telegram inline UI
+│       │   ├── graph_builder.py           # SymPy/NumPy/Matplotlib graph PNG
+│       │   └── utils.py                   # text cleanup and Telegram splitting
+│       ├── rag/
+│       │   ├── pipeline.py                # query analysis + context formatting
+│       │   ├── search.py                  # ranked task search
+│       │   └── analyzer.py                # exam trend statistics
+│       ├── routers/
+│       │   ├── main.py                    # /start, /menu, /health, subscriptions
+│       │   ├── messages.py                # ordinary tutor chat
+│       │   ├── practice.py                # answer checking and explanations
+│       │   ├── practice_subjects.py       # subject selection
+│       │   ├── exam.py                    # exam/practice commands
+│       │   ├── achievements.py            # gamification engine
+│       │   ├── activity.py                # active time UI
+│       │   ├── stats.py                   # learning statistics
+│       │   ├── study_plan.py              # plan generation
+│       │   ├── documents.py               # DOCX/PDF scenario
+│       │   ├── generation.py              # cancellable generation UX
+│       │   ├── settings.py                # model/settings callbacks
+│       │   ├── legal.py                   # consent/data commands
+│       │   └── menu_callbacks.py          # menu action callbacks
+│       └── parsers/
+│           ├── universal_loader.py        # multi-source loader
+│           ├── task_loader.py             # DB loading
+│           ├── fipi_parser.py
+│           └── sources/
+│               ├── fipi_official.py
+│               ├── sdamgia.py
+│               └── math100.py
+├── frontend/
+│   └── vk-mini-app/
+│       ├── package.json
+│       ├── vite.config.js                 # dev proxy to API
+│       ├── public/                        # logo assets
+│       └── src/
+│           ├── App.jsx                    # chat, practice, profile, achievements
+│           ├── main.jsx
+│           └── styles.css                 # responsive light/dark UI
+├── docs/
+│   ├── bot_architecture.html              # this portfolio page
+│   ├── bot_architecture.md
+│   ├── project_structure.md
+│   ├── nginx_tutor_api.conf
+│   ├── offer.md
+│   ├── privacy.md
+│   └── refund.md
+├── tools/
+│   ├── db/
+│   │   └── cleanup_conditions.py
+│   └── fipi/
+│       ├── download_fipi.py
+│       ├── download_fipi_tasks.py
+│       ├── extract_answers_fipi.py
+│       ├── generate_answers.py
+│       └── generate_answers_fast.py
+├── archive/                               # historical backups
+├── docker-compose.yml
+├── .env.example
+└── README.md</code></pre>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Runtime</p>
+          <h2>Запуск и жизненный цикл</h2>
+          <p>
+            В Docker Compose проект поднимает отдельный Telegram worker, отдельный HTTP API
+            и PostgreSQL на образе <code>pgvector/pgvector:pg16</code>.
+          </p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Сервис</th>
+              <th>Команда / образ</th>
+              <th>Роль</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>tutor-bot</code></td>
+              <td><code>python -m src.bot</code></td>
+              <td>Telegram polling, middleware, routers, AI responses, progress tracking.</td>
+            </tr>
+            <tr>
+              <td><code>tutor-api</code></td>
+              <td><code>python -m src.web_api</code></td>
+              <td>aiohttp API for VK Mini App and web clients, health, profile, chat, practice.</td>
+            </tr>
+            <tr>
+              <td><code>postgres</code></td>
+              <td><code>pgvector/pgvector:pg16</code></td>
+              <td>Users, tasks, progress, memory, achievements, activity sessions, search indexes.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="timeline">
+          <div class="step">
+            <div>
+              <strong>Проверка окружения</strong>
+              <span>Bot требует <code>TG_BOT_TOKEN</code>, <code>DATABASE_URL</code>, <code>OPENROUTER_API_KEY</code>; API требует <code>DATABASE_URL</code> и AI-ключ.</span>
+            </div>
+          </div>
+          <div class="step">
+            <div>
+              <strong>Инициализация БД</strong>
+              <span><code>Database.init()</code> создает таблицы, добавляет колонки через <code>ALTER TABLE IF NOT EXISTS</code> и поднимает индексы.</span>
+            </div>
+          </div>
+          <div class="step">
+            <div>
+              <strong>Подключение сервисов</strong>
+              <span><code>services.db_pool</code>, <code>TaskSearch</code>, <code>TrendAnalyzer</code> доступны одинаково для bot и API.</span>
+            </div>
+          </div>
+          <div class="step">
+            <div>
+              <strong>Защита входа</strong>
+              <span><code>AntiSpamMiddleware</code> подключается к message/callback update'ам, а API использует тот же guard через <code>_check_api_action()</code>.</span>
+            </div>
+          </div>
+          <div class="step">
+            <div>
+              <strong>Фоновая уборка</strong>
+              <span>Каждый час закрываются старые активные учебные сессии и пересчитывается время активности.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Tutoring Core</p>
+          <h2>Единый движок ответа для разных платформ</h2>
+          <p>
+            <code>modules/tutor_engine.py</code> убирает дублирование: Telegram и VK/Web API
+            проходят через одну функцию <code>generate_tutor_response()</code>.
+          </p>
+        </div>
+
+        <pre class="mermaid">sequenceDiagram
+    participant Client as Telegram / VK Mini App
+    participant Adapter as Router / API route
+    participant Engine as TutorEngine
+    participant DB as PostgreSQL
+    participant RAG as Tutor-RAG
+    participant Guard as AI Gateway
+    participant AI as OpenRouter
+
+    Client->>Adapter: message / API payload
+    Adapter->>Adapter: auth, consent, limits, anti-spam
+    Adapter->>Engine: generate_tutor_response(user, text, grade)
+    Engine->>DB: recent dialog + memory profile
+    Engine->>Engine: guided-mode intent policy
+    Engine->>RAG: query analysis + task context
+    RAG->>DB: ranked task search
+    Engine->>Guard: guarded OpenRouter request
+    Guard->>AI: selected model + messages
+    AI-->>Guard: generated answer
+    Guard-->>Engine: text + busy status
+    Engine->>DB: save user/assistant messages
+    Engine-->>Adapter: answer, guided flag, RAG metadata
+    Adapter-->>Client: response</pre>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Компонент</th>
+              <th>Что демонстрирует</th>
+              <th>Файлы</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Guided tutoring</td>
+              <td>Бот отличает концептуальный вопрос от попытки получить готовое решение и может вести ученика подсказками.</td>
+              <td><code>modules/tutor_intent.py</code>, <code>modules/prompts.py</code></td>
+            </tr>
+            <tr>
+              <td>Memory-aware prompt</td>
+              <td>Ответ строится из system prompt, краткой истории, долгой памяти, релевантных прошлых фрагментов и RAG-контекста.</td>
+              <td><code>modules/memory.py</code>, <code>database.py</code></td>
+            </tr>
+            <tr>
+              <td>Reusable platform logic</td>
+              <td>Одинаковая логика обучения обслуживает Telegram, VK Mini App и API без привязки к UI-платформе.</td>
+              <td><code>modules/tutor_engine.py</code>, <code>api/routes.py</code>, <code>routers/messages.py</code></td>
+            </tr>
+            <tr>
+              <td>Response hygiene</td>
+              <td>Ответы очищаются, режутся на Telegram-safe chunks и сохраняются в историю с оценкой важности.</td>
+              <td><code>modules/utils.py</code>, <code>database.py</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">AI Infrastructure</p>
+          <h2>OpenRouter, маршрутизация моделей, кеш и защита дорогих запросов</h2>
+          <p>
+            AI-слой выделен в отдельные модули: клиент отвечает за вызов модели,
+            gateway за очередь и статистику, model router за выбор режима, request guard за конкурентный доступ.
+          </p>
+        </div>
+
+        <div class="module-grid">
+          <div class="card">
+            <h3>Model routing</h3>
+            <p>
+              <code>model_router.py</code> классифицирует вопрос как <code>fast</code>,
+              <code>standard</code> или <code>reasoning</code> по длине, формулам, экзаменационным маркерам
+              и предметным словам.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Fallback strategy</h3>
+            <p>
+              <code>ai_client.py</code> пробует fallback-модели и сниженный <code>max_tokens</code>
+              для retryable статусов <code>400/408/429/5xx</code>.
+            </p>
+          </div>
+          <div class="card">
+            <h3>AI queue</h3>
+            <p>
+              <code>request_guard.py</code> держит глобальный semaphore, per-user lock,
+              лимит ожидающих запросов и timeout ожидания свободного AI-слота.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Observability</h3>
+            <p>
+              <code>ai_gateway.py</code> считает started/completed/busy/cancelled/failed,
+              inflight/model-active по типам генерации и среднее время ожидания.
+            </p>
+          </div>
+          <div class="card">
+            <h3>LRU cache</h3>
+            <p>
+              <code>cache.py</code> кеширует AI-ответы по нормализованным messages и model,
+              ограничивает размер и удаляет записи по TTL.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Cancellation UX</h3>
+            <p>
+              <code>generation_control.py</code> хранит активную генерацию на пользователя,
+              умеет отменять задачу и заменять устаревшую генерацию новой.
+            </p>
+          </div>
+        </div>
+
+        <pre class="mermaid">flowchart TD
+    Q["Student question"] --> C["classify_question_complexity"]
+    C --> M["select_model"]
+    M --> Cache{"LRU cache hit?"}
+    Cache -->|yes| Return["return cached answer"]
+    Cache -->|no| Lease["AIRequestGuard acquire"]
+    Lease --> Busy{"slot acquired?"}
+    Busy -->|no| Soft["soft busy response"]
+    Busy -->|yes| OR["OpenRouter request"]
+    OR --> OK{"200 OK?"}
+    OK -->|yes| Save["cache + stats"]
+    OK -->|retryable| Retry["fallback model / lower tokens"]
+    Retry --> OR
+    OK -->|fatal| Error["error text"]
+    Save --> Return</pre>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Data & RAG</p>
+          <h2>База задач, полнотекстовый поиск и учебная память</h2>
+          <p>
+            Проект использует PostgreSQL как центральную систему хранения:
+            пользователи, учебные задачи, прогресс, достижения, активные сессии,
+            события и AI-память находятся в одной связанной модели данных.
+          </p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Таблица / индекс</th>
+              <th>Назначение</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>users</code></td>
+              <td>Профиль, согласие, класс, режим, бесплатные лимиты, подписки, голосовой режим, счетчик запросов.</td>
+            </tr>
+            <tr>
+              <td><code>subjects</code>, <code>fipi_tasks</code></td>
+              <td>Каталог предметов и задач: год, номер, сложность, тема, условие, решение, ответ, объяснение, source URL.</td>
+            </tr>
+            <tr>
+              <td><code>student_progress</code></td>
+              <td>Ответы учеников, correctness, subject/topic, признак использования объяснения.</td>
+            </tr>
+            <tr>
+              <td><code>achievements</code>, <code>user_events</code></td>
+              <td>Открытые достижения и события для метрик активности, запросов и временных условий.</td>
+            </tr>
+            <tr>
+              <td><code>ai_dialog_messages</code></td>
+              <td>История диалога с importance, tags и ограничением последних 80 сообщений на пользователя.</td>
+            </tr>
+            <tr>
+              <td><code>ai_memory_profiles</code></td>
+              <td>Сжатый summary и learning profile, обновляемые через AI каждые 12 сообщений.</td>
+            </tr>
+            <tr>
+              <td><code>user_sessions</code>, <code>user_time_stats</code></td>
+              <td>Расчет активного времени, закрытие старых сессий, суммарная статистика.</td>
+            </tr>
+            <tr>
+              <td><code>GIN to_tsvector</code> indexes</td>
+              <td>Поиск по задачам и памяти на <code>condition/topic/subtopic/answer/content</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="module-grid">
+          <div class="card">
+            <h3>TaskSearch</h3>
+            <p>
+              Умеет выдавать случайные задачи для практики, искать по теме, ключевым словам
+              и ранжировать кандидатов по предмету, номеру задания, topic/subtopic/condition/answer.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Tutor-RAG pipeline</h3>
+            <p>
+              Анализирует запрос ученика, определяет предмет и номер задания, рассчитывает confidence
+              и добавляет компактный контекст только при полезной уверенности.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Memory retrieval</h3>
+            <p>
+              Ищет релевантные прошлые фрагменты не из последних сообщений, сортирует по importance
+              и собирает безопасный блок памяти для system prompt.
+            </p>
+          </div>
+          <div class="card">
+            <h3>TrendAnalyzer</h3>
+            <p>
+              Считает экзаменационную статистику по предметам: количество задач, годы, уникальные темы,
+              ранний и поздний год в базе.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Telegram Product</p>
+          <h2>Функциональные сценарии бота</h2>
+          <p>
+            Telegram-слой покрывает onboarding, согласие на обработку данных,
+            выбор класса, диалог с AI, практику, объяснения, достижения, статистику,
+            документы, настройки и админский health check.
+          </p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Роутер</th>
+              <th>Сценарии</th>
+              <th>Навыки, которые видны в реализации</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>main.py</code></td>
+              <td><code>/start</code>, <code>/menu</code>, <code>/me</code>, <code>/health</code>, класс, подписка, голосовой toggle.</td>
+              <td>aiogram commands/callbacks, HTML formatting, admin diagnostics, product onboarding.</td>
+            </tr>
+            <tr>
+              <td><code>messages.py</code></td>
+              <td>Обычный учебный чат, reset memory, просмотр памяти, построение графиков.</td>
+              <td>async UX, cancellable generation, graph generation, Telegram chunking.</td>
+            </tr>
+            <tr>
+              <td><code>practice.py</code></td>
+              <td>FSM-ответы, проверка, объяснение без финального ответа, показ решения, skip.</td>
+              <td>FSM, SQL inserts, AI explanation caching, образовательная логика.</td>
+            </tr>
+            <tr>
+              <td><code>achievements.py</code></td>
+              <td>Коллекция достижений, прогресс, rarity, автоматическое открытие по метрикам.</td>
+              <td>SQL aggregation, gamification, progress bars, domain metrics.</td>
+            </tr>
+            <tr>
+              <td><code>activity.py</code>, <code>stats.py</code>, <code>study_plan.py</code></td>
+              <td>Время активности, статистика учебы, план подготовки.</td>
+              <td>аналитика, агрегации, пользовательские отчеты.</td>
+            </tr>
+            <tr>
+              <td><code>documents.py</code>, <code>generation.py</code></td>
+              <td>Генерация материалов и документов с кнопкой отмены.</td>
+              <td>long-running tasks, cancellation, DOCX/PDF helpers.</td>
+            </tr>
+            <tr>
+              <td><code>legal.py</code>, <code>settings.py</code>, <code>menu_callbacks.py</code></td>
+              <td>Согласие, удаление данных, настройки, главное меню и разделы инструментов.</td>
+              <td>privacy-aware UX, callback architecture, product navigation.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">VK Mini App & API</p>
+          <h2>Второй клиент поверх той же backend-логики</h2>
+          <p>
+            VK Mini App не содержит секретов и общается с backend только через публичные API endpoints.
+            На фронтенде реализованы чат, практика, достижения, профиль, активность, темы оформления и VK Bridge init.
+          </p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Метод</th>
+              <th>Использование</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/health</code></td>
+              <td>GET</td>
+              <td>Состояние API, БД, RAG, anti-spam, AI queue, generation registry, VK auth config.</td>
+            </tr>
+            <tr>
+              <td><code>/api/chat</code></td>
+              <td>POST</td>
+              <td>AI-ответ через общий <code>generate_tutor_response()</code>, RAG metadata, guided flag.</td>
+            </tr>
+            <tr>
+              <td><code>/api/profile</code></td>
+              <td>GET</td>
+              <td>Класс, лимиты, подписка, запросы, достижения, активность.</td>
+            </tr>
+            <tr>
+              <td><code>/api/achievements</code></td>
+              <td>GET</td>
+              <td>Сводка достижений, unlocked/locked, progress percent, rarity labels.</td>
+            </tr>
+            <tr>
+              <td><code>/api/activity</code></td>
+              <td>GET</td>
+              <td>Активное время, сегодня, всего, лучшая сессия, текущая сессия.</td>
+            </tr>
+            <tr>
+              <td><code>/api/practice/task</code></td>
+              <td>GET</td>
+              <td>Выдача случайной задачи по предмету из <code>TaskSearch</code>.</td>
+            </tr>
+            <tr>
+              <td><code>/api/practice/answer</code></td>
+              <td>POST</td>
+              <td>Проверка ответа, запись в <code>student_progress</code>, возврат решения и достижений.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="module-grid">
+          <div class="card">
+            <h3>VK authentication</h3>
+            <p>
+              <code>vk_auth.py</code> проверяет подпись launch params через HMAC SHA-256,
+              срок действия <code>vk_ts</code>, user id и поддерживает dev/unsigned режимы через env flags.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Frontend architecture</h3>
+            <p>
+              <code>App.jsx</code> держит client state, Promise.all dashboard loading, chat composer,
+              practice workflow, tabs, fallback achievements и форматирование API errors.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Responsive UI</h3>
+            <p>
+              <code>styles.css</code> реализует светлую/темную тему, мобильную адаптацию,
+              безопасные размеры, progress bars, chat bubbles и practice cards.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Local developer loop</h3>
+            <p>
+              <code>vite.config.js</code> проксирует <code>/api</code> и <code>/health</code>
+              на <code>localhost:8080</code>, сохраняя frontend простым в локальной разработке.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Practice & Gamification</p>
+          <h2>Учебный цикл: задача, объяснение, ответ, прогресс, достижение</h2>
+          <p>
+            Сценарий практики показывает, что автор работал не только с AI,
+            но и с обычной продуктовой логикой: состояниями, проверкой, сохранением прогресса,
+            кешированием объяснений и мотивационными метриками.
+          </p>
+        </div>
+
+        <pre class="mermaid">flowchart TD
+    A["User selects practice"] --> B["Subject selection"]
+    B --> C["TaskSearch.get_random_tasks"]
+    C --> D["FSM current_task + correct_answer"]
+    D --> E["Student answer"]
+    E --> F["Normalize and compare"]
+    F --> G["Insert student_progress"]
+    G --> H["check_achievements"]
+    H --> I["Reply with result"]
+
+    D --> X["get_explanation callback"]
+    X --> Y{"Explanation cached?"}
+    Y -->|yes| Z["Use fipi_tasks.explanation"]
+    Y -->|no| AI["Generate via OpenRouter"]
+    AI --> Save["Save explanation to DB"]
+    Z --> Mode["can_see_answer state"]
+    Save --> Mode</pre>
+
+        <div class="module-grid">
+          <div class="card">
+            <h3>Answer checking</h3>
+            <p>Ответы нормализуются, сравниваются с правильным ответом и сохраняются с флагами <code>is_correct</code> и <code>used_explanation</code>.</p>
+          </div>
+          <div class="card">
+            <h3>Pedagogical guardrail</h3>
+            <p>При запросе решения бот сначала предлагает объяснение и только затем позволяет увидеть финальный ответ.</p>
+          </div>
+          <div class="card">
+            <h3>Achievement engine</h3>
+            <p>Метрики включают запросы, решенные задачи, точность, streaks, предметное разнообразие, активное время и подписки.</p>
+          </div>
+          <div class="card">
+            <h3>Activity sessions</h3>
+            <p>Сессии активности закрываются по inactivity threshold, затем агрегируются в <code>user_time_stats</code>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Data acquisition</p>
+          <h2>Парсеры и инструменты подготовки базы задач</h2>
+          <p>
+            В проекте есть отдельный слой для наполнения базы: официальные демоверсии,
+            Sdamgia, Math100, загрузка в PostgreSQL, извлечение ответов и генерация недостающих данных.
+          </p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Файл</th>
+              <th>Роль</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>parsers/universal_loader.py</code></td>
+              <td>Оркестратор загрузки по предметам ЕГЭ/ОГЭ и источникам <code>fipi</code>, <code>sdamgia</code>, <code>math100</code>.</td>
+            </tr>
+            <tr>
+              <td><code>parsers/sources/fipi_official.py</code></td>
+              <td>aiohttp + BeautifulSoup: поиск ссылок на демоверсии, спецификаторы и кодификаторы, PDF-заготовка через pdfplumber.</td>
+            </tr>
+            <tr>
+              <td><code>parsers/sources/sdamgia.py</code></td>
+              <td>Парсинг каталогов и страниц задач, извлечение условия, решения, ответа, темы и номера задания.</td>
+            </tr>
+            <tr>
+              <td><code>tools/fipi/*.py</code></td>
+              <td>Ручные операции: скачивание, извлечение ответов, генерация ответов, fast generation.</td>
+            </tr>
+            <tr>
+              <td><code>load_full_fipi_base.py</code>, <code>export_fipi*.py</code></td>
+              <td>Импорт/экспорт учебных данных и подготовка базы для runtime-поиска.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Reliability</p>
+          <h2>Антиспам, нагрузка, health checks и безопасная деградация</h2>
+          <p>
+            Проект учитывает реальные ограничения: пользователи могут спамить,
+            AI-запросы дорогие, Telegram update'ы приходят всплесками,
+            а API должен возвращать понятные статусы занятости.
+          </p>
+        </div>
+
+        <div class="module-grid">
+          <div class="card">
+            <h3>Per-action anti-spam</h3>
+            <p>
+              Отдельные профили для <code>message</code>, <code>command</code>, <code>callback</code>,
+              <code>api_chat</code>, <code>api_practice</code>: min interval, burst window, max events, cooldown.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Global update limit</h3>
+            <p>
+              <code>MAX_CONCURRENT_UPDATES</code> ограничивает количество одновременно обрабатываемых событий
+              в процессе.
+            </p>
+          </div>
+          <div class="card">
+            <h3>AI queue admission</h3>
+            <p>
+              <code>MAX_CONCURRENT_AI_REQUESTS</code>, <code>AI_QUEUE_WAIT_SECONDS</code>,
+              <code>MAX_WAITING_AI_REQUESTS</code> отделяют дорогую AI-нагрузку от обычных update'ов.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Admin health</h3>
+            <p>
+              Telegram <code>/health</code> и API <code>/health</code> показывают DB, RAG, cache,
+              anti-spam, AI queue, AI gateway и generation registry.
+            </p>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Настройка</th>
+              <th>Значение в шаблоне</th>
+              <th>Смысл</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>MAX_CONCURRENT_UPDATES</code></td>
+              <td><code>200</code></td>
+              <td>Глобальный потолок обработки Telegram/API действий внутри процесса.</td>
+            </tr>
+            <tr>
+              <td><code>MAX_CONCURRENT_AI_REQUESTS</code></td>
+              <td><code>20</code></td>
+              <td>Одновременные запросы к LLM.</td>
+            </tr>
+            <tr>
+              <td><code>AI_QUEUE_WAIT_SECONDS</code></td>
+              <td><code>45</code></td>
+              <td>Сколько запрос может ждать свободный AI slot.</td>
+            </tr>
+            <tr>
+              <td><code>MAX_WAITING_AI_REQUESTS</code></td>
+              <td><code>200</code></td>
+              <td>Защита очереди ожидания от бесконечного роста.</td>
+            </tr>
+            <tr>
+              <td><code>WEB_API_MAX_TEXT_LENGTH</code></td>
+              <td><code>4000</code></td>
+              <td>Ограничение размера входного текста для API chat.</td>
+            </tr>
+            <tr>
+              <td><code>RAG_MIN_CONFIDENCE</code></td>
+              <td><code>0.22</code></td>
+              <td>Порог, ниже которого контекст задач не добавляется в prompt.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Security & Privacy</p>
+          <h2>Практики безопасности, которые уже видны в коде</h2>
+        </div>
+
+        <div class="module-grid">
+          <div class="card">
+            <h3>Secrets outside frontend</h3>
+            <p>OpenRouter, Telegram, PostgreSQL и YooKassa параметры описаны в <code>.env.example</code> и не требуются во frontend runtime.</p>
+          </div>
+          <div class="card">
+            <h3>VK signature verification</h3>
+            <p>Launch params проверяются HMAC-подписью, timestamp freshness и user id validation.</p>
+          </div>
+          <div class="card">
+            <h3>Consent flow</h3>
+            <p>Telegram onboarding требует согласия перед обычным использованием бота; есть команды удаления данных и отзыва согласия.</p>
+          </div>
+          <div class="card">
+            <h3>Input limits</h3>
+            <p>API ограничивает размер JSON client body и длину текста; anti-spam профили защищают chat/practice endpoints.</p>
+          </div>
+          <div class="card">
+            <h3>Memory safety</h3>
+            <p>Профиль памяти обновляется отдельным prompt с ограничением на чувствительные данные и truncation длины записей.</p>
+          </div>
+          <div class="card">
+            <h3>Operational boundary</h3>
+            <p>Nginx config проксирует только <code>/health</code> и <code>/api/</code> на локальный API-порт.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="dark-band">
+        <div class="section-head">
+          <p class="eyebrow">Developer Skills</p>
+          <h2>Навыки программиста, которые демонстрирует проект</h2>
+          <p>
+            Эта работа показывает full-stack разработку AI-продукта: backend, frontend,
+            инфраструктура, данные, UX, безопасность, архитектура и документация собраны в одном проекте.
+          </p>
+        </div>
+
+        <div class="skill-grid">
+          <div class="card">
+            <h3>Async Python engineering</h3>
+            <p>aiogram, aiohttp, asyncpg, asyncio tasks, cancellation, semaphores, locks, background loops.</p>
+          </div>
+          <div class="card">
+            <h3>Bot architecture</h3>
+            <p>Routers, middleware, FSM states, callback UX, Telegram formatting, menus, admin commands.</p>
+          </div>
+          <div class="card">
+            <h3>LLM integration</h3>
+            <p>OpenRouter API, model routing, fallback attempts, max token strategy, prompt composition, answer cleanup.</p>
+          </div>
+          <div class="card">
+            <h3>AI product reliability</h3>
+            <p>Rate limiting, AI queue, duplicate user request protection, LRU cache, health telemetry, graceful busy responses.</p>
+          </div>
+          <div class="card">
+            <h3>RAG and search</h3>
+            <p>Query analysis, subject/task detection, ranked retrieval, confidence gating, PostgreSQL FTS indexes.</p>
+          </div>
+          <div class="card">
+            <h3>Database design</h3>
+            <p>Schema design for users, progress, achievements, events, memory, sessions, indexes and idempotent migrations in code.</p>
+          </div>
+          <div class="card">
+            <h3>Educational domain logic</h3>
+            <p>Guided solving, practice workflow, explanations without immediate answer, exam tasks, plans, stats and achievements.</p>
+          </div>
+          <div class="card">
+            <h3>Frontend engineering</h3>
+            <p>React state, VK Bridge, Vite proxy, tabs, chat UI, practice UI, responsive CSS, themes, API error handling.</p>
+          </div>
+          <div class="card">
+            <h3>Security awareness</h3>
+            <p>VK HMAC verification, env-driven secrets, consent, privacy/legal docs, API input limits, frontend/backend secret boundary.</p>
+          </div>
+          <div class="card">
+            <h3>DevOps</h3>
+            <p>Dockerfile, Docker Compose, pgvector PostgreSQL, Nginx reverse proxy template, deploy commands, health endpoints.</p>
+          </div>
+          <div class="card">
+            <h3>Data engineering</h3>
+            <p>FIPI/Sdamgia/Math100 parsers, BeautifulSoup, pdfplumber, loaders, export scripts and maintenance tools.</p>
+          </div>
+          <div class="card">
+            <h3>Document and math tooling</h3>
+            <p>DOCX/PDF generation, SymPy expression parsing, NumPy sampling, Matplotlib graph rendering to Telegram PNG.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="section-head">
+          <p class="eyebrow">Portfolio Summary</p>
+          <h2>Короткое резюме проекта</h2>
+        </div>
+
+        <div class="callout note">
+          <p>
+            EVO:LUTION Tutor Bot демонстрирует зрелую архитектуру учебного AI-сервиса:
+            Telegram-бот и VK Mini App работают через общий backend, дорогостоящие AI-запросы защищены
+            очередью и антиспамом, ответы персонализируются через память и RAG-контекст,
+            учебные действия сохраняются в PostgreSQL, а прогресс превращается в статистику,
+            достижения и понятный пользовательский интерфейс.
+          </p>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      securityLevel: 'strict'
+    });
+  </script>
+</body>
+</html>
