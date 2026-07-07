@@ -140,8 +140,3 @@ The Vite dev server proxies `/api` and `/health` to `http://localhost:8080`.
 cd frontend/vk-mini-app
 npm run build
 ```
-
-## GitHub Upload
-
-See `GITHUB_UPLOAD.md` for the exact commands to initialize a fresh repository
-and push this cleaned version to GitHub.
