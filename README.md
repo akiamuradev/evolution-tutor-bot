@@ -1,208 +1,106 @@
 # EVO:LUTION Tutor Bot
 
-[![CI](https://github.com/akiamuradev/evolution-tutor-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/akiamuradev/evolution-tutor-bot/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<p align="center">
+  <img src="frontend/vk-mini-app/public/logo-light-theme.png" alt="EVO:LUTION Tutor Bot" width="180">
+</p>
 
-![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
-![aiogram 3.4.1](https://img.shields.io/badge/aiogram-3.4.1-2CA5E0)
-![aiohttp 3.9.1](https://img.shields.io/badge/aiohttp-3.9.1-2C5BB4)
-![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
-![Docker Compose](https://img.shields.io/badge/Docker_Compose-runtime-2496ED?logo=docker&logoColor=white)
-![React 18](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react&logoColor=black)
-![Vite 8](https://img.shields.io/badge/Vite-8.0.0-646CFF?logo=vite&logoColor=white)
-![VK Bridge](https://img.shields.io/badge/VK_Bridge-3.0.2-0077FF?logo=vk&logoColor=white)
-![OpenRouter](https://img.shields.io/badge/OpenRouter-compatible-111827)
+<p align="center">
+  Мультиплатформенный AI-репетитор для школьников: Telegram-бот, HTTP API и VK Mini App с общим учебным ядром.<br>
+  A multi-platform AI tutor with shared backend logic for Telegram and VK Mini App.
+</p>
 
-[Русский](#русский) | [English](#english)
+<p align="center">
+  <a href="https://github.com/akiamuradev/evolution-tutor-bot/actions/workflows/ci.yml"><img src="https://github.com/akiamuradev/evolution-tutor-bot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white" alt="Python 3.11">
+  <img src="https://img.shields.io/badge/aiogram-3.4.1-2CA5E0?logo=telegram&logoColor=white" alt="aiogram 3.4.1">
+  <img src="https://img.shields.io/badge/aiohttp-3.9.1-2C5BB4" alt="aiohttp 3.9.1">
+  <img src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black" alt="React 18">
+  <img src="https://img.shields.io/badge/VK_Bridge-3.0.2-0077FF?logo=vk&logoColor=white" alt="VK Bridge 3.0.2">
+  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL 16">
+  <img src="https://img.shields.io/badge/OpenRouter-LLM-111827" alt="OpenRouter">
+  <img src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose">
+</p>
+
+<p align="center">
+  <a href="#русский">Русский</a> | <a href="#english">English</a>
+</p>
 
 ## Русский
 
-## TL;DR
+### TL;DR
 
-- EVO:LUTION Tutor Bot - AI-репетитор для Telegram и VK Mini App, а не простой чат-бот.
-- Реализованы async Python backend, aiohttp API, PostgreSQL, React/Vite frontend, Docker Compose и GitHub Actions CI.
-- Ключевая инженерная часть: общий TutorEngine, OpenRouter/LiteLLM-compatible LLM, RAG по базе заданий, память пользователя, антиспам и контроль AI-нагрузки.
-- Моя роль: архитектура, интеграция backend/API/frontend/DB/LLM, проверка AI-assisted кода и подготовка публичного GitHub-репозитория.
-- Статус честный: без production dump базы и отдельного test suite; CI проверяет backend compile и frontend build.
-
-EVO:LUTION Tutor Bot - мультиплатформенный AI-репетитор для школьников: Telegram-бот, HTTP API и VK Mini App работают поверх общего backend-ядра. Проект помогает разбирать учебные вопросы, решать практические задания, учитывать прогресс ученика и использовать контекст из базы заданий при ответах LLM.
-
-Это не простой wrapper вокруг чат-модели: в репозитории есть асинхронный Python backend, Telegram-слой, aiohttp API, React/Vite VK Mini App, PostgreSQL-схема, TutorEngine, RAG-пайплайн по учебным заданиям, память диалога, антиспам, ограничение AI-нагрузки, Docker Compose и GitHub Actions.
-
-**Портфолио-проект, показывающий разработку с AI-assisted подходом, async Python backend, Telegram bot, aiohttp HTTP API, PostgreSQL, task-based RAG, React/Vite, VK Bridge и Docker.**
+- EVO:LUTION Tutor Bot — AI-репетитор для Telegram и VK Mini App, а не простой wrapper вокруг чат-модели.
+- Общий `TutorEngine` объединяет LLM, память ученика, RAG по базе заданий, прогресс и достижения.
+- Backend построен на асинхронном Python, aiohttp и PostgreSQL; frontend — на React/Vite и VK Bridge.
+- Проект запускается через Docker Compose и проверяется в GitHub Actions; production dump заданий и отдельный test suite в публичную версию не входят.
 
 ## О проекте
 
-EVO:LUTION Tutor Bot предназначен для школьников, которым нужен помощник по учебным темам, домашним заданиям и подготовке к экзаменам. Основной пользовательский сценарий: ученик открывает Telegram-бота или VK Mini App, задает вопрос или берет тренировочное задание, получает пошаговое объяснение, отправляет ответ, а система сохраняет прогресс и использует историю дальше.
+EVO:LUTION Tutor Bot помогает школьникам разбирать учебные вопросы, тренироваться на заданиях и отслеживать прогресс. Пользователь может общаться с репетитором в Telegram или VK Mini App, а оба интерфейса работают через единый `TutorEngine`.
 
-Проект показывает, как собрать образовательного AI-ассистента как полноценную backend-систему: с API, базой данных, памятью, поиском по учебным материалам, клиентским интерфейсом и инфраструктурой запуска.
+Это не только оболочка над LLM. В проекте реализованы асинхронный Python backend, PostgreSQL, поиск по базе учебных заданий, память диалога, маршрутизация моделей, защита от спама и перегрузки, HTTP API и отдельный React-интерфейс.
 
-## Ключевые возможности
+## Возможности
 
-### AI и RAG
-
-- LLM-интеграция через OpenRouter-compatible endpoint; также поддерживается LiteLLM-compatible proxy через `LITELLM_BASE_URL` и `LITELLM_API_KEY`.
-- Model routing в `backend/src/modules/model_router.py`: выбор fast/standard/reasoning модели по эвристике сложности вопроса.
-- Fallback-попытки в `backend/src/modules/ai_client.py`: повторные запросы к альтернативным моделям и уменьшение `max_tokens` для retryable HTTP-статусов.
-- Общий AI Gateway в `backend/src/modules/ai_gateway.py`: guarded-вызовы модели, статистика, busy-response и контроль активных генераций.
-- In-memory LRU cache для повторяющихся AI-ответов.
-- TutorEngine в `backend/src/modules/tutor_engine.py`: общий слой генерации ответов для Telegram и HTTP API.
-- Память пользователя: последние сообщения, searchable dialog memory, долгосрочный summary и learning profile в таблицах `ai_dialog_messages` и `ai_memory_profiles`.
-- RAG-пайплайн в `backend/src/rag/`: анализ запроса, определение предмета/номера задания, поиск кандидатов в PostgreSQL, локальный reranking и добавление компактного контекста в prompt.
-- Важно: текущий production RAG в публичном коде использует текстовый/метаданный поиск и локальный reranking по базе заданий. Векторный embedding search не является подтвержденной рабочей частью текущей схемы.
-
-### Учебный опыт
-
-- Onboarding в Telegram: согласие на обработку данных и выбор диапазона класса.
-- Чат-репетитор: свободные учебные вопросы через общий TutorEngine.
-- Guided mode: для части запросов система не сразу выдает готовое решение, а ведет ученика через подсказки.
-- Практика по заданиям из `fipi_tasks`: получение задания, ввод ответа, проверка, сохранение попытки в `student_progress`.
-- AI-объяснения для практических заданий: если объяснения нет в базе, оно генерируется и сохраняется в `fipi_tasks.explanation`.
-- Статистика по решенным задачам: количество попыток, правильность, предметы, темы и использование объяснений.
-- Достижения: вычисляются по активности, запросам, прогрессу и подписочным флагам.
-- Activity tracking: учет пользовательских сессий и времени активности.
-- Персональный недельный план в Telegram на основе статистики решенных задач, если у пользователя достаточно данных.
-- Построение графиков функций в Telegram через SymPy/NumPy/Matplotlib.
-
-### Платформы и интерфейсы
-
-- Telegram bot на `aiogram` с polling entrypoint `python -m src.bot`.
-- HTTP API на `aiohttp` с entrypoint `python -m src.web_api`.
-- VK Mini App на React/Vite/VK Bridge.
-- API endpoints:
-  - `GET /health`
-  - `POST /api/chat`
-  - `GET /api/profile`
-  - `GET /api/achievements`
-  - `GET /api/activity`
-  - `GET /api/practice/task`
-  - `POST /api/practice/answer`
-- VK launch params verification через HMAC SHA-256 в `backend/src/modules/vk_auth.py`.
-- Nginx reverse proxy template в `docs/nginx_tutor_api.conf`.
-
-### Инженерная часть
-
-- Async Python stack: `aiogram`, `aiohttp`, `asyncpg`, `httpx`.
-- PostgreSQL как основное хранилище пользователей, заданий, прогресса, достижений, памяти и активности.
-- Индексы базы данных для поиска заданий, прогресса, достижений, сессий и памяти диалога.
-- Docker Compose runtime с тремя сервисами: `tutor-bot`, `tutor-api`, `postgres`.
-- PostgreSQL image: `pgvector/pgvector:pg16`; текущий публичный retrieval code не использует vector embeddings.
-- Anti-spam и rate limiting в `backend/src/modules/anti_spam.py`.
-- AI concurrency guard в `backend/src/modules/request_guard.py`.
-- Реестр отмены генераций по пользователям в `backend/src/modules/generation_control.py`.
-- GitHub Actions CI:
-  - compile check backend на Python 3.11;
-  - сборка frontend на Node 22 через `npm run build`.
-- Гигиена публичного репозитория: `.env` игнорируется, `.env.example` включен, сборочные артефакты и локальные файлы базы не попадают в Git.
-
-## Пример пользовательского сценария
-
-1. Пользователь открывает Telegram bot или VK Mini App.
-2. В Telegram пользователь принимает обработку данных и выбирает диапазон класса; в VK Mini App пользователь определяется через launch params.
-3. Пользователь задает учебный вопрос или запрашивает практическое задание.
-4. Backend выполняет проверки авторизации и лимитов, затем передает запрос в TutorEngine.
-5. TutorEngine собирает контекст из system prompt, недавнего диалога, долгосрочной памяти и, когда это полезно, RAG-поиска по `fipi_tasks`.
-6. AI Gateway отправляет guarded-запрос в настроенную OpenRouter/LiteLLM-compatible model.
-7. Ответ возвращается пользователю; память диалога, активность, прогресс и достижения обновляются в PostgreSQL.
+- AI-репетитор с пошаговыми объяснениями и режимом подсказок.
+- Telegram-бот на `aiogram` и VK Mini App на React/Vite.
+- Практические задания с проверкой ответов и сохранением результатов.
+- RAG-поиск по банку заданий в PostgreSQL с локальным reranking.
+- Краткосрочная история диалога и долгосрочный профиль ученика.
+- Статистика активности, прогресс, достижения и учебный план.
+- Выбор fast, standard или reasoning модели по сложности запроса.
+- OpenRouter API или совместимый LiteLLM proxy.
+- Кэширование повторяющихся AI-ответов, rate limiting и контроль параллельных генераций.
+- Построение графиков функций через SymPy, NumPy и Matplotlib.
 
 ## Архитектура
 
-Подробные документы по архитектуре:
-
-- [docs/bot_architecture.md](docs/bot_architecture.md)
-- [docs/bot_architecture.html](docs/bot_architecture.html)
-- [docs/project_structure.md](docs/project_structure.md)
-
 ```mermaid
 flowchart LR
-    TG["Telegram Bot<br/>aiogram"] --> TR["Telegram routers<br/>commands, FSM, practice"]
-    VK["VK Mini App<br/>React/Vite/VK Bridge"] --> API["HTTP API<br/>aiohttp routes"]
-    TR --> GUARD["Anti-spam<br/>generation control"]
-    API --> AUTH["VK auth<br/>anti-spam"]
-    GUARD --> TE["TutorEngine<br/>общее учебное ядро"]
-    AUTH --> TE
-    TE --> POLICY["Prompts<br/>tutor policy"]
-    TE --> MEM["Память диалога<br/>history + profile"]
-    TE --> RAG["Tutor-RAG<br/>TaskSearch + reranking"]
-    TE --> AIG["AI Gateway<br/>queue + model routing"]
-    RAG --> DB[(PostgreSQL<br/>users, tasks, progress, memory)]
-    MEM --> DB
-    TR --> DB
-    API --> DB
-    AIG --> LLM["OpenRouter / LiteLLM-compatible LLM"]
+    TG["Telegram Bot<br/>aiogram"] --> ENGINE["TutorEngine<br/>учебное ядро"]
+    VK["VK Mini App<br/>React + VK Bridge"] --> API["HTTP API<br/>aiohttp"]
+    API --> ENGINE
+    ENGINE --> MEMORY["Память<br/>история + профиль"]
+    ENGINE --> RAG["RAG<br/>поиск + reranking"]
+    ENGINE --> GATEWAY["AI Gateway<br/>лимиты + model routing"]
+    MEMORY --> DB[("PostgreSQL<br/>пользователи и прогресс")]
+    RAG --> DB
+    GATEWAY --> LLM["OpenRouter / LiteLLM"]
 ```
 
-### Основные компоненты
+Основные компоненты:
 
 | Компонент | Путь | Назначение |
 |---|---|---|
-| Telegram entrypoint | `backend/src/bot.py` | Запускает bot polling, инициализирует DB/RAG-сервисы, подключает routers и anti-spam middleware. |
-| HTTP API entrypoint | `backend/src/web_api.py` | Запускает aiohttp API для VK Mini App и будущих web-клиентов. |
-| API routes | `backend/src/api/routes.py` | Endpoints для health, profile, achievements, activity, chat и practice. |
-| TutorEngine | `backend/src/modules/tutor_engine.py` | Платформенно-независимая генерация ответов репетитора. |
-| AI client | `backend/src/modules/ai_client.py` | Вызовы OpenRouter/LiteLLM-compatible API, выбор модели, повторные попытки и cache. |
-| RAG | `backend/src/rag/` | Анализ учебного запроса, поиск и reranking заданий по данным PostgreSQL. |
-| Memory | `backend/src/modules/memory.py` | Контекст памяти пользователя и периодическая суммаризация профиля. |
-| Database | `backend/src/database.py`, `backend/database/init.sql` | Runtime schema, migrations-by-code и начальная SQL-схема. |
-| VK Mini App | `frontend/vk-mini-app/` | React/Vite frontend с вкладками чата, практики, достижений и профиля. |
-| Docs | `docs/` | Архитектура, структура проекта, Nginx config и юридические документы. |
+| Telegram entrypoint | `backend/src/bot.py` | Запуск polling и подключение роутеров |
+| HTTP API | `backend/src/web_api.py` | Backend для VK Mini App |
+| TutorEngine | `backend/src/modules/tutor_engine.py` | Общая логика AI-репетитора |
+| AI Gateway | `backend/src/modules/ai_gateway.py` | Очередь, ограничения и статистика запросов |
+| AI client | `backend/src/modules/ai_client.py` | Работа с OpenRouter/LiteLLM и fallback-моделями |
+| RAG | `backend/src/rag/` | Анализ запроса и поиск учебных заданий |
+| Memory | `backend/src/modules/memory.py` | История диалога и профиль ученика |
+| Database | `backend/src/database.py` | Асинхронный доступ к PostgreSQL |
+| VK Mini App | `frontend/vk-mini-app/` | Интерфейс на React/Vite |
 
-## Технологический стек
+Подробности есть в [описании архитектуры](docs/bot_architecture.md) и [структуре проекта](docs/project_structure.md).
 
-| Область | Технологии |
+## Технологии
+
+| Область | Стек |
 |---|---|
 | Backend | Python 3.11, aiogram, aiohttp, asyncpg, httpx |
-| AI | OpenRouter-compatible API, опциональный LiteLLM-compatible proxy, prompt orchestration |
-| RAG/Search | Банк заданий в PostgreSQL, text/metadata search, локальный reranking |
-| Database | PostgreSQL, pgvector image, SQL schema, async data access |
+| AI | OpenRouter-compatible API, LiteLLM-compatible proxy |
+| Data | PostgreSQL 16, SQL, task-based RAG |
 | Frontend | React 18, Vite, VK Bridge |
-| DevOps | Docker Compose, GitHub Actions, Nginx config |
-| Обработка данных | FIPI/Sdamgia/Math100 parsers и maintenance scripts |
-| Documents/Math tools | python-docx, reportlab, SymPy, NumPy, Matplotlib |
+| Math | SymPy, NumPy, Matplotlib |
+| Infrastructure | Docker Compose, Nginx, GitHub Actions |
 
-## Структура репозитория
+## Быстрый запуск
 
-```text
-.
-+-- backend/
-|   +-- Dockerfile
-|   +-- requirements.txt
-|   +-- database/
-|   |   `-- init.sql
-|   `-- src/
-|       +-- bot.py
-|       +-- web_api.py
-|       +-- database.py
-|       +-- api/
-|       +-- modules/
-|       +-- rag/
-|       +-- routers/
-|       `-- parsers/
-+-- frontend/
-|   `-- vk-mini-app/
-|       +-- src/
-|       +-- public/
-|       +-- package.json
-|       `-- vite.config.js
-+-- docs/
-+-- tools/
-+-- .github/workflows/ci.yml
-+-- .env.example
-+-- docker-compose.yml
-`-- README.md
-```
+Понадобятся Git, Docker с Docker Compose, Telegram bot token и ключ OpenRouter либо доступ к LiteLLM-compatible proxy.
 
-## Локальный запуск
-
-### Требования
-
-- Git
-- Docker и Docker Compose
-- Node.js 22+ для локальной разработки VK Mini App
-- Telegram bot token для Telegram-интерфейса
-- OpenRouter API key или доступный LiteLLM-compatible proxy
-
-### 1. Клонировать репозиторий и настроить окружение
+### 1. Подготовьте окружение
 
 ```bash
 git clone https://github.com/akiamuradev/evolution-tutor-bot.git
@@ -210,48 +108,62 @@ cd evolution-tutor-bot
 cp .env.example .env
 ```
 
-Альтернатива для PowerShell:
+Для PowerShell:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Отредактируйте `.env` и задайте минимум:
+Заполните в `.env` как минимум:
 
 ```env
-TG_BOT_TOKEN=...
+TG_BOT_TOKEN=your-telegram-bot-token
 BOT_USERNAME=@your_bot_username
-OPENROUTER_API_KEY=...
-POSTGRES_PASSWORD=...
-DATABASE_URL=postgresql://tutor_user:your_password@postgres:5432/tutor_db
+
+OPENROUTER_API_KEY=your-openrouter-api-key
+
+POSTGRES_USER=tutor_user
+POSTGRES_PASSWORD=choose-a-password
+POSTGRES_DB=tutor_db
+DATABASE_URL=postgresql://tutor_user:choose-a-password@postgres:5432/tutor_db
+
 WEB_API_PORT=8080
 ```
 
-Для прямого использования OpenRouter удалите или закомментируйте `LITELLM_BASE_URL` и `LITELLM_API_KEY` в `.env`. Код использует `https://openrouter.ai/api/v1` только если `LITELLM_BASE_URL` не задан, а `OPENROUTER_API_KEY` используется только если не задан `LITELLM_API_KEY`.
+Для прямой работы с OpenRouter удалите или закомментируйте `LITELLM_BASE_URL` и `LITELLM_API_KEY`. Если они заданы, приложение считает LiteLLM основным провайдером. Сам LiteLLM в `docker-compose.yml` не запускается.
 
-Если используется LiteLLM-compatible proxy, задайте `LITELLM_BASE_URL` и `LITELLM_API_KEY`. Текущий `docker-compose.yml` не поднимает отдельный LiteLLM service.
-
-### 2. Запустить backend-сервисы
+### 2. Запустите backend
 
 ```bash
 docker compose up -d --build
 docker compose ps
-docker compose logs -f --tail=100 tutor-api
 ```
 
-Проверка health endpoint:
+Будут запущены три сервиса:
+
+- `tutor-bot` — Telegram polling;
+- `tutor-api` — HTTP API на порту `8080`;
+- `postgres` — PostgreSQL с постоянным volume `postgres_data`.
+
+Проверка API:
 
 ```bash
 curl http://localhost:8080/health
 ```
 
-Docker runtime запускает:
+Логи:
 
-- `tutor-bot` - процесс Telegram polling;
-- `tutor-api` - HTTP API на `${WEB_API_PORT:-8080}`;
-- `postgres` - база PostgreSQL с постоянным volume `postgres_data`.
+```bash
+docker compose logs -f --tail=100 tutor-bot tutor-api
+```
 
-### 3. Запустить VK Mini App локально
+Остановка:
+
+```bash
+docker compose down
+```
+
+### 3. Запустите VK Mini App
 
 ```bash
 cd frontend/vk-mini-app
@@ -259,42 +171,70 @@ npm ci
 npm run dev
 ```
 
-Vite запускается на порту `5173`. При локальной разработке, если `VITE_API_BASE_URL` не задан, frontend использует относительные пути `/api`, а Vite проксирует их на `http://localhost:8080`.
+Vite откроет приложение на `http://localhost:5173`. В режиме разработки запросы `/api` проксируются на `http://localhost:8080`.
 
-Для запуска вне локального Vite задайте:
+Для внешнего API создайте `frontend/vk-mini-app/.env`:
 
 ```env
-VITE_API_BASE_URL=https://your-api-domain.example
+VITE_API_BASE_URL=https://api.example.com
 ```
 
-### 4. Данные для practice и RAG
+## HTTP API
 
-Docker инициализирует таблицы базы данных, но публичный репозиторий не содержит готовый PostgreSQL dump с заполненными учебными заданиями. Practice и RAG зависят от записей в:
+| Метод | Endpoint | Назначение |
+|---|---|---|
+| `GET` | `/health` | Состояние API, базы, RAG и очереди AI |
+| `POST` | `/api/chat` | Ответ AI-репетитора |
+| `GET` | `/api/profile` | Профиль и сводка ученика |
+| `GET` | `/api/achievements` | Достижения и прогресс |
+| `GET` | `/api/activity` | Статистика активности |
+| `GET` | `/api/practice/task` | Случайное практическое задание |
+| `POST` | `/api/practice/answer` | Проверка и сохранение ответа |
 
-- `subjects`
-- `fipi_tasks`
+VK-запросы могут авторизовываться через подписанные launch params. Для локальной разработки поведение настраивается переменными `WEB_API_ALLOW_UNSIGNED_VK_LAUNCH` и `WEB_API_ALLOW_INSECURE_USER_ID`.
 
-Связанный код для загрузки и обслуживания данных находится здесь:
+## Учебные данные
 
-- `backend/src/download_fipi_tasks.py`
-- `backend/src/load_full_fipi_base.py`
-- `backend/src/parsers/`
-- `tools/fipi/`
-- `tools/db/`
+Docker создаёт структуру базы, но публичный репозиторий не содержит production dump с готовым банком заданий. Практика и RAG требуют заполненных таблиц `subjects` и `fipi_tasks`.
 
-Часть loaders предполагает, что справочник предметов уже существует, поэтому загрузку данных нужно сверять с текущей схемой перед использованием как production seed data.
+Инструменты загрузки и обслуживания данных находятся в:
+
+- `backend/src/parsers/`;
+- `backend/src/download_fipi_tasks.py`;
+- `backend/src/load_full_fipi_base.py`;
+- `tools/fipi/` и `tools/db/`.
+
+Перед production-использованием загрузчики следует проверить на соответствие актуальной схеме и правилам источников данных.
+
+## Структура репозитория
+
+```text
+.
+├── backend/
+│   ├── database/          # начальная SQL-схема
+│   └── src/
+│       ├── api/           # HTTP handlers
+│       ├── modules/       # AI, память, лимиты, TutorEngine
+│       ├── rag/           # поиск по учебным заданиям
+│       ├── routers/       # Telegram-сценарии
+│       └── parsers/       # загрузка учебных данных
+├── frontend/
+│   └── vk-mini-app/       # React/Vite приложение
+├── docs/                  # архитектура и конфигурация Nginx
+├── tools/                 # служебные скрипты
+├── docker-compose.yml
+└── .github/workflows/ci.yml
+```
 
 ## Проверки качества
 
-В публичном репозитории сейчас есть CI-проверки, но нет полноценного автоматизированного набора тестов.
-
-Локальная compile check для backend:
+Backend compile check:
 
 ```bash
 python -m compileall -q backend/src
 ```
 
-Локальная сборка frontend:
+Frontend build:
 
 ```bash
 cd frontend/vk-mini-app
@@ -302,109 +242,80 @@ npm ci
 npm run build
 ```
 
-GitHub Actions запускает такие же проверки при push в `main` и pull request.
+Эти проверки выполняются в GitHub Actions при push в `main` и в pull request. Отдельного набора unit/integration-тестов в текущей версии репозитория нет.
 
-## Заметки по конфигурации
+## Ограничения текущей версии
 
-- `.env.example` описывает переменные для Telegram, LLM, anti-spam, RAG, VK, PostgreSQL и YooKassa.
-- `.env`, вложенные `.env`-файлы, локальные DB-файлы, logs, frontend builds и `node_modules` игнорируются через `.gitignore`.
-- API CORS настраивается через `WEB_API_CORS_ORIGIN`.
-- VK auth может использовать подписанные launch params через `VK_APP_SECRET`; fallback-флаги для разработки доступны через `WEB_API_ALLOW_UNSIGNED_VK_LAUNCH` и `WEB_API_ALLOW_INSECURE_USER_ID`.
-- Шаблон Nginx proxy лежит в `docs/nginx_tutor_api.conf`.
+- Для practice и RAG нужен отдельно подготовленный банк учебных заданий.
+- Используется текстовый и метаданный поиск с локальным reranking; полноценный embedding search не подключён.
+- VK Mini App запускается отдельно от backend-контейнеров.
+- Перед публичным production-запуском необходимо запретить небезопасные dev-флаги авторизации, ограничить CORS и настроить HTTPS/reverse proxy.
 
-## Текущее состояние репозитория
+## Лицензия
 
-- Реализованы и подключены как основные пути: чат в Telegram, чат через HTTP API, разделы chat/practice/profile/achievements во VK Mini App, TutorEngine, вызовы LLM, сборщик RAG-контекста, память диалога, учет активности, достижения, сохранение данных в PostgreSQL, Docker Compose и CI-проверки.
-- В публичный репозиторий не включены: production-дамп базы данных и отдельный unit/integration test suite.
-- Некоторые legacy или информационные тексты Telegram-меню упоминают возможности, которые не вынесены в этот README, потому что они не полностью связаны в текущем публичном коде.
-
-## Роль автора и AI-assisted development
-
-Этот репозиторий честно представлен как портфолио-проект с AI-assisted разработкой.
-
-Моя роль в проекте:
-
-- декомпозиция продукта: образовательный chatbot, сценарий практики, прогресс, память, VK Mini App и API;
-- архитектура backend: async Python services, общий TutorEngine, API layer, Telegram layer и persistence model;
-- AI orchestration: prompt context, model routing, fallbacks, guarded requests, память и RAG integration;
-- интеграция frontend: React/Vite VK Mini App, подключенный к backend API;
-- инфраструктура: Docker Compose, настройка environment, GitHub-ready структура репозитория и CI-проверки;
-- документация и подготовка публичного репозитория.
-
-AI tools использовались для ускорения реализации, рефакторинга и документации. Инженерная ценность здесь не в "скорости ручного набора кода", а в умении спроектировать продукт, разложить его на сервисы, направлять код, сгенерированный AI, проверять факты репозитория, интегрировать компоненты, находить устаревшие части и упаковывать результат в понятный GitHub-проект.
-
-## Навыки, показанные в проекте
-
-- Разработка async Python backend.
-- Разработка Telegram bot на aiogram.
-- Проектирование HTTP API на aiohttp.
-- Проектирование PostgreSQL schema и async data access.
-- Интеграция LLM, prompt orchestration и обработка model fallback.
-- RAG/search pipeline поверх структурированных образовательных данных.
-- User memory и personalization patterns.
-- Request throttling, AI concurrency control и обработка отмены генераций.
-- React/Vite frontend development для VK Mini App.
-- Настройка local/runtime окружения на Docker Compose.
-- Настройка GitHub Actions CI.
-- Техническая документация и подготовка репозитория под портфолио.
+Проект распространяется по лицензии [MIT](LICENSE).
 
 ---
 
 ## English
 
-## TL;DR
+### TL;DR
 
-- EVO:LUTION Tutor Bot is an AI tutor for Telegram and VK Mini App, not just a chat wrapper.
-- Implemented: async Python backend, aiohttp API, PostgreSQL, React/Vite frontend, Docker Compose and GitHub Actions CI.
-- Core engineering work: shared TutorEngine, OpenRouter/LiteLLM-compatible LLM, task-based RAG, user memory, anti-spam and AI load control.
-- Author role: architecture, backend/API/frontend/DB/LLM integration, AI-assisted code review and public GitHub packaging.
-- Current status is explicit: no production database dump or dedicated test suite; CI checks backend compile and frontend build.
+- EVO:LUTION Tutor Bot is an AI tutor for Telegram and VK Mini App, not a thin chat-model wrapper.
+- A shared `TutorEngine` combines LLM calls, student memory, task-based RAG, progress tracking and achievements.
+- The system uses an async Python/aiohttp/PostgreSQL backend and a React/Vite/VK Bridge frontend.
+- Docker Compose and GitHub Actions are included; the public repository does not contain a production task dump or a dedicated test suite.
 
-EVO:LUTION Tutor Bot is a multi-platform AI tutor for students. It includes a Telegram bot, an aiohttp HTTP API and a React/Vite VK Mini App backed by PostgreSQL, shared tutoring logic, LLM integration, task-based RAG, user memory, practice tasks, progress tracking and achievements.
+## About
 
-**Portfolio project showcasing AI-assisted development, async Python backend, Telegram bot, aiohttp HTTP API, PostgreSQL, task-based RAG, React/Vite, VK Bridge and Docker.**
+EVO:LUTION Tutor Bot is a multi-platform educational assistant for students. Users can ask study questions, work through practice tasks and review their progress in Telegram or a VK Mini App. Both clients rely on the same backend tutoring core.
 
-## What Is Implemented
+The repository goes beyond basic LLM integration. It includes an asynchronous Telegram layer, an aiohttp API, PostgreSQL persistence, dialog memory, task-based retrieval, model routing, anti-spam controls, AI concurrency limits and a separate React interface.
 
-- Telegram bot with onboarding, tutoring chat, practice tasks, explanations, stats, activity, achievements, study plan flow and graph generation.
-- HTTP API for health, chat, profile, achievements, activity and practice.
-- VK Mini App with chat, practice, achievements and profile tabs.
-- Shared TutorEngine used by both Telegram and API clients.
-- OpenRouter/LiteLLM-compatible AI client with model routing, fallback attempts and cache.
-- RAG pipeline over a PostgreSQL task bank using query analysis, task search and local reranking.
-- User memory based on recent dialog, searchable history and periodic profile summaries.
-- PostgreSQL schema for users, tasks, progress, achievements, dialog memory and activity.
-- Docker Compose runtime with bot, API and PostgreSQL.
-- GitHub Actions CI for backend compile check and frontend build.
+## Key Features
+
+- Telegram onboarding, tutoring chat, practice flows, statistics, activity tracking and achievements.
+- VK Mini App with chat, practice, achievements and profile sections.
+- Shared `TutorEngine` for Telegram and HTTP API clients.
+- OpenRouter-compatible LLM integration with optional LiteLLM proxy support.
+- Fast, standard and reasoning model routing based on request complexity.
+- Fallback models, reduced-token retries and an in-memory response cache.
+- Dialog history, searchable memory and a long-term learning profile.
+- RAG over a PostgreSQL task bank using query analysis, metadata search and local reranking.
+- Anti-spam rules, global request limits and per-user generation control.
+- Function graph generation with SymPy, NumPy and Matplotlib.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    TG["Telegram Bot<br/>aiogram"] --> TR["Telegram routers<br/>commands, FSM, practice"]
-    VK["VK Mini App<br/>React/Vite/VK Bridge"] --> API["HTTP API<br/>aiohttp routes"]
-    TR --> GUARD["Anti-spam<br/>generation control"]
-    API --> AUTH["VK auth<br/>anti-spam"]
-    GUARD --> TE["TutorEngine<br/>shared tutoring core"]
-    AUTH --> TE
-    TE --> POLICY["Prompts<br/>tutor policy"]
-    TE --> MEM["Dialog memory<br/>history + profile"]
-    TE --> RAG["Tutor-RAG<br/>TaskSearch + reranking"]
-    TE --> AIG["AI Gateway<br/>queue + model routing"]
-    RAG --> DB[(PostgreSQL<br/>users, tasks, progress, memory)]
-    MEM --> DB
-    TR --> DB
-    API --> DB
-    AIG --> LLM["OpenRouter / LiteLLM-compatible LLM"]
+    TG["Telegram Bot<br/>aiogram"] --> ENGINE["TutorEngine<br/>shared tutoring core"]
+    VK["VK Mini App<br/>React + VK Bridge"] --> API["HTTP API<br/>aiohttp"]
+    API --> ENGINE
+    ENGINE --> MEMORY["Dialog memory<br/>history + profile"]
+    ENGINE --> RAG["Task-based RAG<br/>search + reranking"]
+    ENGINE --> GATEWAY["AI Gateway<br/>limits + model routing"]
+    MEMORY --> DB[("PostgreSQL<br/>users and progress")]
+    RAG --> DB
+    GATEWAY --> LLM["OpenRouter / LiteLLM"]
 ```
 
-See also:
+See [architecture details](docs/bot_architecture.md) and the [project structure guide](docs/project_structure.md).
 
-- [docs/bot_architecture.md](docs/bot_architecture.md)
-- [docs/project_structure.md](docs/project_structure.md)
-- [docs/nginx_tutor_api.conf](docs/nginx_tutor_api.conf)
+## Technology Stack
+
+| Area | Technologies |
+|---|---|
+| Backend | Python 3.11, aiogram, aiohttp, asyncpg, httpx |
+| AI | OpenRouter-compatible API, optional LiteLLM-compatible proxy |
+| Data | PostgreSQL 16, SQL, task-based RAG |
+| Frontend | React 18, Vite, VK Bridge |
+| Math | SymPy, NumPy, Matplotlib |
+| Infrastructure | Docker Compose, Nginx, GitHub Actions |
 
 ## Quick Start
+
+Requirements: Git, Docker with Docker Compose, a Telegram bot token and either an OpenRouter API key or access to a LiteLLM-compatible proxy.
 
 ```bash
 git clone https://github.com/akiamuradev/evolution-tutor-bot.git
@@ -412,27 +323,33 @@ cd evolution-tutor-bot
 cp .env.example .env
 ```
 
-Configure `.env`:
+Configure at least these variables in `.env`:
 
 ```env
-TG_BOT_TOKEN=...
+TG_BOT_TOKEN=your-telegram-bot-token
 BOT_USERNAME=@your_bot_username
-OPENROUTER_API_KEY=...
-POSTGRES_PASSWORD=...
-DATABASE_URL=postgresql://tutor_user:your_password@postgres:5432/tutor_db
+
+OPENROUTER_API_KEY=your-openrouter-api-key
+
+POSTGRES_USER=tutor_user
+POSTGRES_PASSWORD=choose-a-password
+POSTGRES_DB=tutor_db
+DATABASE_URL=postgresql://tutor_user:choose-a-password@postgres:5432/tutor_db
+
 WEB_API_PORT=8080
 ```
 
-For direct OpenRouter usage, remove or comment out `LITELLM_BASE_URL` and `LITELLM_API_KEY`. The current Docker Compose file does not start a LiteLLM service.
+For direct OpenRouter access, remove or comment out `LITELLM_BASE_URL` and `LITELLM_API_KEY`. The current Compose file does not start a LiteLLM service.
 
-Start services:
+Start the backend services:
 
 ```bash
 docker compose up -d --build
+docker compose ps
 curl http://localhost:8080/health
 ```
 
-Run VK Mini App locally:
+Run the VK Mini App locally:
 
 ```bash
 cd frontend/vk-mini-app
@@ -440,9 +357,29 @@ npm ci
 npm run dev
 ```
 
-The public repository contains database schema and data-loading scripts, but does not include a ready production dump of educational tasks. Practice and RAG require populated `subjects` and `fipi_tasks` tables.
+Vite starts on `http://localhost:5173` and proxies local `/api` requests to `http://localhost:8080`.
 
-## Checks
+## HTTP API
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/health` | API, database, RAG and AI queue status |
+| `POST` | `/api/chat` | Generate a tutor response |
+| `GET` | `/api/profile` | Student profile and summary |
+| `GET` | `/api/achievements` | Achievements and progress |
+| `GET` | `/api/activity` | Activity statistics |
+| `GET` | `/api/practice/task` | Retrieve a practice task |
+| `POST` | `/api/practice/answer` | Check and store an answer |
+
+VK requests can be authenticated using signed launch parameters. Development fallback behavior is controlled by `WEB_API_ALLOW_UNSIGNED_VK_LAUNCH` and `WEB_API_ALLOW_INSECURE_USER_ID`.
+
+## Educational Data
+
+Docker initializes the database schema, but the public repository does not include a production PostgreSQL dump with a populated task bank. Practice and RAG require data in the `subjects` and `fipi_tasks` tables.
+
+Import and maintenance tools are located in `backend/src/parsers/`, `backend/src/download_fipi_tasks.py`, `backend/src/load_full_fipi_base.py`, `tools/fipi/` and `tools/db/`.
+
+## Quality Checks
 
 ```bash
 python -m compileall -q backend/src
@@ -454,8 +391,15 @@ npm ci
 npm run build
 ```
 
-The current public repo has CI compile/build checks, but no dedicated unit or integration test suite.
+GitHub Actions runs the same backend compile and frontend build checks on pushes to `main` and pull requests. The current public repository does not include a dedicated unit or integration test suite.
 
-## AI-Assisted Development
+## Current Limitations
 
-This is an AI-assisted portfolio project. AI tools helped speed up implementation, refactoring and documentation. The engineering work shown here is product decomposition, architecture decisions, integration of backend/API/frontend/database/LLM components, repository cleanup, factual documentation and GitHub-ready packaging.
+- Practice and RAG require a separately prepared educational task bank.
+- Retrieval uses text and metadata search with local reranking; embedding search is not connected.
+- The VK Mini App is started separately from the backend containers.
+- Production deployment requires secure VK auth flags, restricted CORS, HTTPS and a reverse proxy.
+
+## License
+
+This project is distributed under the [MIT License](LICENSE).
