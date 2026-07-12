@@ -106,17 +106,21 @@ EVO:LUTION Tutor Bot предназначен для школьников, ко�
 
 ```mermaid
 flowchart LR
-    TG["Telegram Bot<br/>aiogram"] --> TE["TutorEngine<br/>общее учебное ядро"]
-    VK["VK Mini App<br/>React/Vite/VK Bridge"] --> API["HTTP API<br/>aiohttp"]
-    API --> TE
-    TE --> MEM["Память диалога<br/>ai_dialog_messages<br/>ai_memory_profiles"]
-    TE --> RAG["Tutor-RAG<br/>анализ запроса + reranking задач"]
-    RAG --> DB[(PostgreSQL)]
+    TG["Telegram Bot<br/>aiogram"] --> TR["Telegram routers<br/>commands, FSM, practice"]
+    VK["VK Mini App<br/>React/Vite/VK Bridge"] --> API["HTTP API<br/>aiohttp routes"]
+    TR --> GUARD["Anti-spam<br/>generation control"]
+    API --> AUTH["VK auth<br/>anti-spam"]
+    GUARD --> TE["TutorEngine<br/>общее учебное ядро"]
+    AUTH --> TE
+    TE --> POLICY["Prompts<br/>tutor policy"]
+    TE --> MEM["Память диалога<br/>history + profile"]
+    TE --> RAG["Tutor-RAG<br/>TaskSearch + reranking"]
+    TE --> AIG["AI Gateway<br/>queue + model routing"]
+    RAG --> DB[(PostgreSQL<br/>users, tasks, progress, memory)]
     MEM --> DB
-    TE --> GATE["AI Gateway<br/>queue + guarded calls"]
-    GATE --> LLM["OpenRouter / LiteLLM-compatible LLM"]
+    TR --> DB
     API --> DB
-    TG --> DB
+    AIG --> LLM["OpenRouter / LiteLLM-compatible LLM"]
 ```
 
 ### Основные компоненты
@@ -360,15 +364,21 @@ EVO:LUTION Tutor Bot is a multi-platform AI tutor for students. It includes a Te
 
 ```mermaid
 flowchart LR
-    TG["Telegram Bot"] --> TE["TutorEngine"]
-    VK["VK Mini App"] --> API["HTTP API"]
-    API --> TE
-    TE --> RAG["Task RAG"]
-    TE --> MEM["User Memory"]
-    RAG --> DB[(PostgreSQL)]
+    TG["Telegram Bot<br/>aiogram"] --> TR["Telegram routers<br/>commands, FSM, practice"]
+    VK["VK Mini App<br/>React/Vite/VK Bridge"] --> API["HTTP API<br/>aiohttp routes"]
+    TR --> GUARD["Anti-spam<br/>generation control"]
+    API --> AUTH["VK auth<br/>anti-spam"]
+    GUARD --> TE["TutorEngine<br/>shared tutoring core"]
+    AUTH --> TE
+    TE --> POLICY["Prompts<br/>tutor policy"]
+    TE --> MEM["Dialog memory<br/>history + profile"]
+    TE --> RAG["Tutor-RAG<br/>TaskSearch + reranking"]
+    TE --> AIG["AI Gateway<br/>queue + model routing"]
+    RAG --> DB[(PostgreSQL<br/>users, tasks, progress, memory)]
     MEM --> DB
-    TE --> AI["AI Gateway"]
-    AI --> LLM["OpenRouter / LiteLLM-compatible LLM"]
+    TR --> DB
+    API --> DB
+    AIG --> LLM["OpenRouter / LiteLLM-compatible LLM"]
 ```
 
 See also:
