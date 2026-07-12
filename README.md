@@ -1,6 +1,7 @@
 # EVO:LUTION Tutor Bot
 
 [![CI](https://github.com/akiamuradev/evolution-tutor-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/akiamuradev/evolution-tutor-bot/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
 ![aiogram 3.4.1](https://img.shields.io/badge/aiogram-3.4.1-2CA5E0)
