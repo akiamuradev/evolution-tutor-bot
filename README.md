@@ -16,6 +16,14 @@
 
 ## Русский
 
+## TL;DR
+
+- EVO:LUTION Tutor Bot - AI-репетитор для Telegram и VK Mini App, а не простой чат-бот.
+- Реализованы async Python backend, aiohttp API, PostgreSQL, React/Vite frontend, Docker Compose и GitHub Actions CI.
+- Ключевая инженерная часть: общий TutorEngine, OpenRouter/LiteLLM-compatible LLM, RAG по базе заданий, память пользователя, антиспам и контроль AI-нагрузки.
+- Моя роль: архитектура, интеграция backend/API/frontend/DB/LLM, проверка AI-assisted кода и подготовка публичного GitHub-репозитория.
+- Статус честный: без production dump базы и отдельного test suite; CI проверяет backend compile и frontend build.
+
 EVO:LUTION Tutor Bot - мультиплатформенный AI-репетитор для школьников: Telegram-бот, HTTP API и VK Mini App работают поверх общего backend-ядра. Проект помогает разбирать учебные вопросы, решать практические задания, учитывать прогресс ученика и использовать контекст из базы заданий при ответах LLM.
 
 Это не простой wrapper вокруг чат-модели: в репозитории есть асинхронный Python backend, Telegram-слой, aiohttp API, React/Vite VK Mini App, PostgreSQL-схема, TutorEngine, RAG-пайплайн по учебным заданиям, память диалога, антиспам, ограничение AI-нагрузки, Docker Compose и GitHub Actions.
@@ -342,6 +350,14 @@ AI tools использовались для ускорения реализац
 ---
 
 ## English
+
+## TL;DR
+
+- EVO:LUTION Tutor Bot is an AI tutor for Telegram and VK Mini App, not just a chat wrapper.
+- Implemented: async Python backend, aiohttp API, PostgreSQL, React/Vite frontend, Docker Compose and GitHub Actions CI.
+- Core engineering work: shared TutorEngine, OpenRouter/LiteLLM-compatible LLM, task-based RAG, user memory, anti-spam and AI load control.
+- Author role: architecture, backend/API/frontend/DB/LLM integration, AI-assisted code review and public GitHub packaging.
+- Current status is explicit: no production database dump or dedicated test suite; CI checks backend compile and frontend build.
 
 EVO:LUTION Tutor Bot is a multi-platform AI tutor for students. It includes a Telegram bot, an aiohttp HTTP API and a React/Vite VK Mini App backed by PostgreSQL, shared tutoring logic, LLM integration, task-based RAG, user memory, practice tasks, progress tracking and achievements.
 
